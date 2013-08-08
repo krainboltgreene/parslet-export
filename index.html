@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640" />
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>parslet-export by krainboltgreene</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/krainboltgreene/parslet-export">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>parslet-export</h1>
+            <h2>A way to turn Parslet Parsers into other things</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/krainboltgreene/parslet-export/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/krainboltgreene/parslet-export/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <ul>
+<li><a href="https://rubygems.org/gems/parslet-export"><img src="https://badge.fury.io/rb/parslet-export.png" alt="Gem Version"></a></li>
+<li><a href="https://codeclimate.com/github/krainboltgreene/parslet-export"><img src="https://codeclimate.com/github/krainboltgreene/parslet-export.png" alt="Code Climate"></a></li>
+<li><a href="https://travis-ci.org/krainboltgreene/parslet-export"><img src="https://travis-ci.org/krainboltgreene/parslet-export.png" alt="Build Status"></a></li>
+<li><a href="https://gemnasium.com/krainboltgreene/parslet-export"><img src="https://gemnasium.com/krainboltgreene/parslet-export.png" alt="Dependency Status"></a></li>
+<li><a href="https://coveralls.io/r/krainboltgreene/parslet-export"><img src="https://coveralls.io/repos/krainboltgreene/parslet-export/badge.png?branch=master" alt="Coverage Status"></a></li>
+</ul><p>This gem lets you turn Parslet::Parsers into other things!</p>
+
+<p>Currently we support:</p>
+
+<ul>
+<li>Parslet::Parser -&gt; Hash (for JSON or the like)</li>
+</ul><h1>
+<a name="using" class="anchor" href="#using"><span class="octicon octicon-link"></span></a>Using</h1>
+
+<p>First lets create a parser:</p>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">SomeParser</span> <span class="o">&lt;</span> <span class="ss">Parslet</span><span class="p">:</span><span class="ss">:Parser</span>
+  <span class="n">root</span><span class="p">(</span><span class="ss">:command</span><span class="p">)</span>
+  <span class="n">rule</span><span class="p">(</span><span class="ss">:space</span><span class="p">)</span> <span class="p">{</span> <span class="n">match</span><span class="o">[</span><span class="s2">"</span><span class="se">\s</span><span class="s2">"</span><span class="o">].</span><span class="n">repeat</span> <span class="p">}</span>
+  <span class="n">rule</span><span class="p">(</span><span class="ss">:space?</span><span class="p">)</span> <span class="p">{</span> <span class="n">space</span><span class="o">.</span><span class="n">maybe</span> <span class="p">}</span>
+  <span class="n">rule</span><span class="p">(</span><span class="ss">:username</span><span class="p">)</span> <span class="p">{</span> <span class="n">match</span><span class="o">[</span><span class="s2">"a-zA-Z0-9"</span><span class="o">].</span><span class="n">repeat</span> <span class="p">}</span>
+  <span class="n">rule</span><span class="p">(</span><span class="ss">:password</span><span class="p">)</span> <span class="p">{</span> <span class="n">match</span><span class="o">[</span><span class="s2">"a-zA-Z0-9"</span><span class="o">].</span><span class="n">repeat</span> <span class="p">}</span>
+  <span class="n">rule</span><span class="p">(</span><span class="ss">:arguments</span><span class="p">)</span> <span class="p">{</span> <span class="n">username</span><span class="o">.</span><span class="n">as</span><span class="p">(</span><span class="ss">:username</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">space?</span> <span class="o">&gt;&gt;</span> <span class="n">password</span><span class="o">.</span><span class="n">as</span><span class="p">(</span><span class="ss">:password</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">space?</span> <span class="p">}</span>
+  <span class="n">rule</span><span class="p">(</span><span class="ss">:control</span><span class="p">)</span> <span class="p">{</span> <span class="n">str</span><span class="p">(</span><span class="s2">"account"</span><span class="p">)</span><span class="o">.</span><span class="n">as</span><span class="p">(</span><span class="ss">:control</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">rule</span><span class="p">(</span><span class="ss">:action</span><span class="p">)</span> <span class="p">{</span> <span class="n">str</span><span class="p">(</span><span class="s2">"create"</span><span class="p">)</span><span class="o">.</span><span class="n">as</span><span class="p">(</span><span class="ss">:action</span><span class="p">)</span> <span class="p">}</span>
+  <span class="n">rule</span><span class="p">(</span><span class="ss">:command</span><span class="p">)</span> <span class="p">{</span> <span class="n">control</span> <span class="o">&gt;&gt;</span> <span class="n">space</span> <span class="o">&gt;&gt;</span> <span class="n">action</span> <span class="o">&gt;&gt;</span> <span class="n">space</span> <span class="o">&gt;&gt;</span> <span class="n">arguments</span> <span class="p">}</span>
+<span class="k">end</span>
+</pre></div>
+
+<p>And now we dump it like this:</p>
+
+<div class="highlight"><pre><span class="n">parser</span> <span class="o">=</span> <span class="no">SomeParser</span><span class="o">.</span><span class="n">new</span>
+<span class="nb">hash</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">to_hash</span>
+</pre></div>
+
+<p>And we get this:</p>
+
+<div class="highlight"><pre><span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"root"</span><span class="p">,</span>
+ <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+  <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+   <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:command</span><span class="p">,</span>
+   <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+    <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"sequence"</span><span class="p">,</span>
+     <span class="s2">"parslets"</span><span class="o">=&gt;</span>
+      <span class="o">[</span><span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:control</span><span class="p">,</span>
+        <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+         <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"named"</span><span class="p">,</span>
+          <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:control</span><span class="p">,</span>
+          <span class="s2">"parslet"</span><span class="o">=&gt;</span><span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"str"</span><span class="p">,</span> <span class="s2">"str"</span><span class="o">=&gt;</span><span class="s2">"account"</span><span class="p">}}},</span>
+       <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:space</span><span class="p">,</span>
+        <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+         <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"repetition"</span><span class="p">,</span>
+          <span class="s2">"min"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span>
+          <span class="s2">"max"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span>
+          <span class="s2">"parslet"</span><span class="o">=&gt;</span><span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"re"</span><span class="p">,</span> <span class="s2">"match"</span><span class="o">=&gt;</span><span class="s2">"[ ]"</span><span class="p">,</span> <span class="s2">"re"</span><span class="o">=&gt;</span><span class="sr">/[ ]/m</span><span class="p">}}},</span>
+       <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:action</span><span class="p">,</span>
+        <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+         <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"named"</span><span class="p">,</span>
+          <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:action</span><span class="p">,</span>
+          <span class="s2">"parslet"</span><span class="o">=&gt;</span><span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"str"</span><span class="p">,</span> <span class="s2">"str"</span><span class="o">=&gt;</span><span class="s2">"create"</span><span class="p">}}},</span>
+       <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:space</span><span class="p">,</span>
+        <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+         <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"repetition"</span><span class="p">,</span>
+          <span class="s2">"min"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span>
+          <span class="s2">"max"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span>
+          <span class="s2">"parslet"</span><span class="o">=&gt;</span><span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"re"</span><span class="p">,</span> <span class="s2">"match"</span><span class="o">=&gt;</span><span class="s2">"[ ]"</span><span class="p">,</span> <span class="s2">"re"</span><span class="o">=&gt;</span><span class="sr">/[ ]/m</span><span class="p">}}},</span>
+       <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+        <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:arguments</span><span class="p">,</span>
+        <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+         <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"sequence"</span><span class="p">,</span>
+          <span class="s2">"parslets"</span><span class="o">=&gt;</span>
+           <span class="o">[</span><span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"named"</span><span class="p">,</span>
+             <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:username</span><span class="p">,</span>
+             <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+              <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+               <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:username</span><span class="p">,</span>
+               <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+                <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"repetition"</span><span class="p">,</span>
+                 <span class="s2">"min"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="s2">"max"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span>
+                 <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+                  <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"re"</span><span class="p">,</span>
+                   <span class="s2">"match"</span><span class="o">=&gt;</span><span class="s2">"[a-zA-Z0-9]"</span><span class="p">,</span>
+                   <span class="s2">"re"</span><span class="o">=&gt;</span><span class="sr">/[a-zA-Z0-9]/m</span><span class="p">}}}},</span>
+            <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+             <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:space?</span><span class="p">,</span>
+             <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+              <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"repetition"</span><span class="p">,</span>
+               <span class="s2">"min"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span>
+               <span class="s2">"max"</span><span class="o">=&gt;</span><span class="mi">1</span><span class="p">,</span>
+               <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+                <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+                 <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:space</span><span class="p">,</span>
+                 <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+                  <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"repetition"</span><span class="p">,</span>
+                   <span class="s2">"min"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span>
+                   <span class="s2">"max"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span>
+                   <span class="s2">"parslet"</span><span class="o">=&gt;</span><span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"re"</span><span class="p">,</span> <span class="s2">"match"</span><span class="o">=&gt;</span><span class="s2">"[ ]"</span><span class="p">,</span> <span class="s2">"re"</span><span class="o">=&gt;</span><span class="sr">/[ ]/m</span><span class="p">}}}}},</span>
+            <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"named"</span><span class="p">,</span>
+             <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:password</span><span class="p">,</span>
+             <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+              <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+               <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:password</span><span class="p">,</span>
+               <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+                <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"repetition"</span><span class="p">,</span>
+                 <span class="s2">"min"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="s2">"max"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span>
+                 <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+                  <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"re"</span><span class="p">,</span>
+                   <span class="s2">"match"</span><span class="o">=&gt;</span><span class="s2">"[a-zA-Z0-9]"</span><span class="p">,</span>
+                   <span class="s2">"re"</span><span class="o">=&gt;</span><span class="sr">/[a-zA-Z0-9]/m</span><span class="p">}}}},</span>
+            <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+             <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:space?</span><span class="p">,</span>
+             <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+              <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"repetition"</span><span class="p">,</span>
+               <span class="s2">"min"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span>
+               <span class="s2">"max"</span><span class="o">=&gt;</span><span class="mi">1</span><span class="p">,</span>
+               <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+                <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"entity"</span><span class="p">,</span>
+                 <span class="s2">"name"</span><span class="o">=&gt;</span><span class="ss">:space</span><span class="p">,</span>
+                 <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+                  <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"repetition"</span><span class="p">,</span>
+                   <span class="s2">"min"</span><span class="o">=&gt;</span><span class="mi">0</span><span class="p">,</span>
+                   <span class="s2">"max"</span><span class="o">=&gt;</span><span class="kp">nil</span><span class="p">,</span>
+                   <span class="s2">"parslet"</span><span class="o">=&gt;</span>
+                    <span class="p">{</span><span class="s2">"atom"</span><span class="o">=&gt;</span><span class="s2">"re"</span><span class="p">,</span> <span class="s2">"match"</span><span class="o">=&gt;</span><span class="s2">"[ ]"</span><span class="p">,</span> <span class="s2">"re"</span><span class="o">=&gt;</span><span class="sr">/[ ]/m</span><span class="p">}}}}}</span><span class="o">]</span><span class="p">}}</span><span class="o">]</span><span class="p">}}}</span>
+</pre></div>
+
+<p>We can now load it like this:</p>
+
+<div class="highlight"><pre><span class="n">parslet</span> <span class="o">=</span> <span class="ss">Parslet</span><span class="p">:</span><span class="ss">:Parser</span><span class="o">.</span><span class="n">from_hash</span><span class="p">(</span><span class="nb">hash</span><span class="p">)</span>
+</pre></div>
+
+<p>And we can now parse with this:</p>
+
+<div class="highlight"><pre><span class="n">parslet</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"account create krainboltgreene 1234abcd"</span><span class="p">)</span>
+</pre></div>
+
+<p>Which gives this tree:</p>
+
+<div class="highlight"><pre><span class="p">{</span><span class="ss">:control</span><span class="o">=&gt;</span><span class="s2">"account"</span><span class="err">@</span><span class="mi">0</span><span class="p">,</span>
+ <span class="ss">:action</span><span class="o">=&gt;</span><span class="s2">"create"</span><span class="err">@</span><span class="mi">8</span><span class="p">,</span>
+ <span class="ss">:username</span><span class="o">=&gt;</span><span class="s2">"krainboltgreene"</span><span class="err">@</span><span class="mi">15</span><span class="p">,</span>
+ <span class="ss">:password</span><span class="o">=&gt;</span><span class="s2">"1234abcd"</span><span class="err">@</span><span class="mi">31</span><span class="p">}</span>
+</pre></div>
+
+<h1>
+<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h1>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<pre><code>gem 'parslet-export'
+</code></pre>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install parslet-export
+</code></pre>
+
+<h1>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h1>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+      </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/krainboltgreene">krainboltgreene</a> can be found on <a href="https://github.com/krainboltgreene/parslet-export">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
+    </div>
+
+    
+  </body>
+</html>
