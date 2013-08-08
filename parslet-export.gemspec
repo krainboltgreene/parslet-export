@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Parslet::Export::VERSION
   spec.authors       = ["Kurtis Rainbolt-Greene"]
   spec.email         = ["me@kurtisrainboltgreene.name"]
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.summary       = %q{Turn Parslet::Parser into other things}
   spec.description   = spec.summary
   spec.homepage      = "http://krainboltgreene.github.com/parslet-export"
   spec.license       = "MIT"
