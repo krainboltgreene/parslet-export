@@ -2,19 +2,14 @@ require "spec_helper"
 
 describe Parslet::Atoms::Named do
   describe "#to_hash" do
-    let(:atom) { described_class.new(Parslet::Atoms::Str.new("foo"), "foo") }
-
-    it "returns a Hash object" do
-      expect(atom.to_hash).to be_kind_of(Hash)
-    end
+    let(:dump) { described_class.new(Parslet::Atoms::Str.new("foo"), "foo").to_hash }
 
     it "contains the name" do
-      expect(atom.to_hash["name"]).to eq("foo")
+      expect(dump["name"]).to eq("foo")
     end
 
-    it "contains the parslet" do
-      expect(atom.to_hash["parslet"]).to be_kind_of(Hash)
-      expect(atom.to_hash["parslet"]).to have_key("atom")
+    it "contains the dumped parslet" do
+      expect(dump["parslet"]["atom"]).to eq("str")
     end
   end
 end
