@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "parslet/export/version"
+require "parslet-export/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "parslet-export"
-  spec.version       = Parslet::Export::VERSION
+  spec.version       = ParsletExport::VERSION
   spec.authors       = ["Kurtis Rainbolt-Greene"]
   spec.email         = ["me@kurtisrainboltgreene.name"]
   spec.summary       = %q{Turn Parslet::Parser into other things}
